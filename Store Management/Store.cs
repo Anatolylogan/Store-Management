@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Store_Management
 {
@@ -17,6 +18,7 @@ namespace Store_Management
         }
         public void AddProduct(Product product)
         {
+
             if (productCount < Products.Length)
             {
                 Products[productCount] = product;
@@ -49,6 +51,18 @@ namespace Store_Management
                 }
             }
             return totalVale;
+        }
+        public void ApplyDiscountToProduct(int productIndex, Discount discount)
+        {
+            if (productIndex >= 0 && productIndex < productCount)
+            {
+                Products[productIndex].ApplyDiscount(discount);
+                Console.WriteLine($"Cкидка{discount.Percentage}% Применена к товару {Products[productIndex].Name} ");
+            }
+            else
+            {
+                Console.WriteLine("Неверный ввод");
+            }
         }
     }
 }

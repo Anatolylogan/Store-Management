@@ -1,6 +1,6 @@
 ﻿namespace Store_Management
 {
-    class Program
+    public class Program
     {
 
         static void Main(string[] args)
@@ -17,53 +17,73 @@
                 Console.WriteLine("4. Применить скидку на товар");
                 Console.WriteLine("5. Выйти");
                 Console.WriteLine("Введите номер действия: ");
-                string choice = Console.ReadLine();
-                switch (choice)
+                int choice;
+                if (int.TryParse(Console.ReadLine(), out choice))
                 {
-                    case "1":
-                        Console.WriteLine("Введите название товра:");
-                        string name = Console.ReadLine();
-                        Console.WriteLine("Введите цену товара:");
-                        double price = Convert.ToDouble(Console.ReadLine());
-                        Console.WriteLine("Выберите категорию товара:");
-                        Console.WriteLine("1.Продукты питания");
-                        Console.WriteLine("2.Электроника");
-                        Console.WriteLine("3.Одежда");
-                        int categoryChoice = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("Товар успешно добавлен!");
-                        ProductCategory category = (ProductCategory)(categoryChoice - 1);
-                        Product product = new Product(name, price, category);
-                        store.AddProduct(product);
-                        break;
-                    case "2":
-                        store.DisplayProducts();
-                        break;
-                    case "3":
-                        double totalValue = store.CalculateTotalStoreValue();
-                        Console.WriteLine($"Общая стоимость всех товаров с учетом налога: {totalValue}");
-                        break;
-                    case "4":
-                        Console.WriteLine("Введите название продукта для применения скидки");
-                        string productName = Console.ReadLine();
-                        foreach (var prod in store.Products)
-                        {
-                            if (prod != null && prod.Name == productName)
-                            {
-                                Console.WriteLine("Введите процент скидки");
-                                double discount = Convert.ToDouble(Console.ReadLine());
-                                prod.ApplyDiscount(discount);
-                            }
-                        }
-                        break;
-                    case "5":
-                        Console.WriteLine("До свидания!");
-                        break;
-                    default:
-                        Console.WriteLine("Неверный ввод. Попробуйте снова!");
-                        break;
+                    switch (choice)
+                    {
+                        case 1:
+                            AddProduct(store);
+                            break;
+                        case 2:
+                            store.DisplayProducts();
+                            break;
+                        case 3:
+                            totalValue(store);
+                            break;
+                        case 4:
+                            ApplyDiscount(store);
+                            break;
+                        case 5:
+                            Console.WriteLine("До свидания!");
+                            running = false;
+                            break;
+                        default:
+                            Console.WriteLine("Неверный ввод. Попробуйте снова!");
+                            break;
 
+                    }
                 }
             }
+        }
+        private static void AddProduct(Store store)
+        {
+            Console.Write("Введите название товара: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Введите цену товара: ");
+            double price;
+            while (!double.TryParse(Console.ReadLine(), out price) || price <= 0)
+            {
+                Console.WriteLine("Некорректная цена. Введите положительное число: ");
+            }
+            Console.WriteLine("Выберите категорию товара:");
+            Console.WriteLine("0 - Продукты питания");
+            Console.WriteLine("1 - Электроника");
+            Console.WriteLine("2 - Одежда");
+            int categoryChoice;
+            while (!int.TryParse(Console.ReadLine(), out categoryChoice) || categoryChoice < 0 || categoryChoice > 2)
+            {
+                Console.WriteLine("Некорректный выбор. Пожалуйста, выберите от 0 до 2: ");
+            }
+            ProductCategory category = (ProductCategory)categoryChoice;
+            Product newProduct = new Product(name, price, category);
+            store.AddProduct(newProduct);
+        }
+
+        private static void ApplyDiscount(Store store)
+        {
+            Console.WriteLine("Введите индекс товара для примениня скидки:");
+            int index = int.Parse(Console.ReadLine());
+            Console.WriteLine("Введите процент скидки:");
+            double percentage = double.Parse(Console.ReadLine());
+            Discount discount = new Discount(percentage);
+            store.ApplyDiscountToProduct(index, discount);
+        }
+        private static void totalValue(Store store)
+        {
+            double totalValue = store.CalculateTotalStoreValue();
+            Console.WriteLine($"Общая стоимость всех товаров с учетом налога: {totalValue}");
         }
     }
 }

@@ -33,9 +33,10 @@ namespace Store_Management
         {
             return Price + (Price * TAX_RATE);
         }
-        public void ApplyDiscount(double discount)
+        public void ApplyDiscount(Discount discount)
         {
-            Price -= Price * (discount / 100);
+            double discountAmount = discount.CalculateDiscountAmount(Price);
+            Price -= discountAmount;
         }
         public void DisplayProductInfo()
         {
@@ -62,16 +63,12 @@ namespace Store_Management
         {
             if (Price > 10)
             {
-                ApplyDiscount(10);
                 Console.WriteLine("Применена скидка 10%");
-
             }
         }
         public string CheckAvailability(int quanity)
         {
             return quanity > 0 ? "В наличии" : "Нет в наличии";
         }
-
     }
-
 }
